@@ -5,5 +5,6 @@ import titoloViaggio.TitoloViaggio;
 
 @Entity
 public class Biglietto extends TitoloViaggio {
+    //
     private boolean ridotto;
 }
