@@ -1,28 +1,27 @@
 package societa.trasporti.parchiMezzi;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "mezzi")
-
-
-
 public abstract class ParcoMezzi {
+
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long matricola;
 
-   @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private TipoVeicolo tipoVeicolo;
 
+    @Column
     private int capienza;
-    private boolean inServizio;
-}
 
+    @Column
+    private boolean inServizio;
+
+    @ManyToOne // Relazione Many-to-One con Tratta
+    @JoinColumn(name = "id_tratta") // Chiave esterna verso Tratta
+    private Tratta tratta;
+}
