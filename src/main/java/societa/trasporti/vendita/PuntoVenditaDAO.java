@@ -1,4 +1,4 @@
-package sistemadistribuzione;
+package societa.trasporti.vendita;
 
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
