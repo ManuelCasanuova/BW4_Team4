@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "persone")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Persona {
 
     @Id

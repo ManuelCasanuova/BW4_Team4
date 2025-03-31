@@ -5,13 +5,16 @@ import lombok.Data;
 
 @Data
 @Entity
-@DiscriminatorValue("Utenti")
-public class Utente extends Persona {
+@Table(name = "utenti")
+public class Utente {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     @Column
-    private String tipoUtente; //"Semplice", "Amministratore"
+    private String tipoUtente; // "Semplice", "Amministratore"
 
-    @OneToOne // Relazione uno-a-uno
-    @JoinColumn(name = "numero_tessera")
-    private Tessera tessera;
+    @OneToOne(mappedBy = "utente", cascade = CascadeType.ALL) // Lato inverso
+    private Tessera tessera; // La tessera associata all'utente
 }
