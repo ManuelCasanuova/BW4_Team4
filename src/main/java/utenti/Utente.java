@@ -1,16 +1,17 @@
 package utenti;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
+@DiscriminatorValue("Utenti")
 public class Utente extends Persona {
 
-    @Column(name = "tipo_utente")
-    private String tipoUtente; // Semplice o Amministratore
+    @Column
+    private String tipoUtente; //"Semplice", "Amministratore"
+
+    @OneToOne // Relazione uno-a-uno
+    @JoinColumn(name = "numero_tessera")
+    private Tessera tessera;
 }

@@ -1,27 +1,26 @@
 package utenti;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import utenti.Persona;
 
 import java.time.LocalDate;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
+@DiscriminatorValue("Tessere")
 public class Tessera extends Persona {
 
-    @Column(name = "numero_tessera", unique = true)
+    @Column
     private String numeroTessera;
 
-    @Column(name = "data_emissione")
+    @Column
     private LocalDate dataDiEmissione;
 
-    @Column(name = "data_scadenza")
+    @Column
     private LocalDate dataDiScadenza;
+
+    @OneToOne(mappedBy = "tessera")
+    private Utente utente;
 
     public boolean isValid() {
         return LocalDate.now().isBefore(dataDiScadenza);
