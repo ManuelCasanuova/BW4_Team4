@@ -1,6 +1,5 @@
 package sistemadistribuzione;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -10,13 +9,15 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Table(name="rivenditori_autorizzati")
+@NoArgsConstructor
+@Table(name="distributori_automatici")
 
-public class RivenditoreAutorizzato extends PuntoVendita {
+public class Distributiore extends PuntoVendita {
 
     @Column(nullable = false)
-    private String nome;
+    private boolean attivo;
+
+
 
 }
