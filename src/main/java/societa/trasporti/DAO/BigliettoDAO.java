@@ -1,4 +1,4 @@
-package DAO;
+package societa.trasporti.DAO;
 
 import jakarta.persistence.EntityManager;
 import titoloViaggio.biglietto.Biglietto;
