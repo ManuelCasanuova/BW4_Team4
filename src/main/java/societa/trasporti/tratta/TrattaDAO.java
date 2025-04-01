@@ -1,99 +1,96 @@
 package societa.trasporti.tratta;
 
 import jakarta.persistence.*;
-import societa.trasporti.exception.TrattaException;
+import societa.trasporti.exception.TrattaPercorsaException;
 
 import java.util.List;
 import java.util.Optional;
 
 public class TrattaDAO {
 
-    private static final EntityManagerFactory ENTITY_MANAGER_FACTORY =
-            Persistence.createEntityManagerFactory("epicode");
+    private EntityManager em;
 
-    private EntityManager entityManager;
-
-    public TrattaDAO() {
-        this.entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    public TrattaDAO(EntityManager em) {
+        this.em = em;
     }
 
     public void close() {
-        if (entityManager != null && entityManager.isOpen()) {
-            entityManager.close();
+        if (em != null && em.isOpen()) {
+            em.close();
         }
     }
 
     // trova tratta per id
     public Optional<Tratta> findById(Long id) {
         try {
-            return Optional.ofNullable(entityManager.find(Tratta.class, id));
+            return Optional.ofNullable(em.find(Tratta.class, id));
         } catch (Exception e) {
-            throw new TrattaException();
+            throw new TrattaPercorsaException();
         }
     }
 
     // trova tratte per zona di partenza
     public List<Tratta> findByZonaPartenza(String zonaPartenza) {
         try {
-            TypedQuery<Tratta> query = entityManager.createQuery(
+            TypedQuery<Tratta> query = em.createQuery(
                     "SELECT t FROM Tratta t WHERE t.zonaPartenza = :zonaPartenza", Tratta.class);
             query.setParameter("zonaPartenza", zonaPartenza);
             return query.getResultList();
         } catch (Exception e) {
-            throw new TrattaException();
+            throw new TrattaPercorsaException();
         }
     }
 
     // trova tratte per zona di arrivo
     public List<Tratta> findByZonaArrivo(String zonaArrivo) {
         try {
-            TypedQuery<Tratta> query = entityManager.createQuery(
+            TypedQuery<Tratta> query = em.createQuery(
                     "SELECT t FROM Tratta t WHERE t.zonaArrivo = :zonaArrivo", Tratta.class);
             query.setParameter("zonaArrivo", zonaArrivo);
             return query.getResultList();
         } catch (Exception e) {
-            throw new TrattaException();
+            throw new TrattaPercorsaException();
         }
     }
 
     // salva tratte
     public void save(Tratta tratta) {
         try {
-            entityManager.getTransaction().begin();
-            entityManager.persist(tratta);
-            entityManager.getTransaction().commit();
+            em.getTransaction().begin();
+            em.persist(tratta);
+            em.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw new TrattaException();
+            em.getTransaction().rollback();
+            throw new TrattaPercorsaException();
         }
     }
 
     // aggiorna una tratta
     public void update(Tratta tratta) {
         try {
-            entityManager.getTransaction().begin();
-            entityManager.merge(tratta);
-            entityManager.getTransaction().commit();
+            em.getTransaction().begin();
+            em.merge(tratta);
+            em.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw new TrattaException();
+            em.getTransaction().rollback();
+            throw new TrattaPercorsaException();
         }
     }
 
     // elimina una tratta
     public void delete(Long id) {
         try {
-            entityManager.getTransaction().begin();
-            Tratta tratta = entityManager.find(Tratta.class, id);
+            em.getTransaction().begin();
+            Tratta tratta = em.find(Tratta.class, id);
             if (tratta != null) {
-                entityManager.remove(tratta);
+                em.remove(tratta);
             } else {
-                throw new TrattaException();
+                throw new TrattaPercorsaException();
             }
-            entityManager.getTransaction().commit();
+            em.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw new TrattaException();
+            em.getTransaction().rollback();
+            throw new TrattaPercorsaException();
         }
     }
 }
