@@ -3,9 +3,10 @@ package main;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import societa.trasporti.DAO.*;
 import societa.trasporti.tratta.Tratta;
+import societa.trasporti.tratta.TrattaDAO;
 import societa.trasporti.utenti.Utente;
+import societa.trasporti.utenti.UtenteDAO;
 import societa.trasporti.vendita.PuntoVendita;
 import societa.trasporti.vendita.PuntoVenditaDAO;
 import societa.trasporti.vendita.rivenditori.RivenditoreAutorizzato;
@@ -22,8 +23,8 @@ public class MainTest {
         try {
             // Creazione DAO
             PuntoVenditaDAO puntoVenditaDAO = new PuntoVenditaDAO(em);
-            UtenteDao utenteDao = new UtenteDao(em);
-            TrattaDAO trattaDAO = new TrattaDAO();
+            UtenteDAO utenteDao = new UtenteDAO(em);
+            TrattaDAO trattaDAO = new TrattaDAO(em);
 
             // Apertura della transazione
             em.getTransaction().begin();

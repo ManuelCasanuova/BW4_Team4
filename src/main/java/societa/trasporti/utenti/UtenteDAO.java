@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class UtenteDao {
+public class UtenteDAO {
     private EntityManager em;
 
     // metodo per fare il find di un utente
