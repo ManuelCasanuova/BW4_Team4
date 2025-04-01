@@ -2,12 +2,14 @@ package societa.trasporti.servizi;
 
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import societa.trasporti.parchiMezzi.ParcoMezzi;
 import societa.trasporti.tratta.Tratta;
 
 import java.time.LocalDate;
 
+@Data
 @Entity
 @Table(name = "servizi")
 @NoArgsConstructor

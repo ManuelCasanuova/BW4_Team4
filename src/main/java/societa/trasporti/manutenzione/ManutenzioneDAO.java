@@ -23,24 +23,35 @@ public class ManutenzioneDAO {
         if (parcoMezzi.isInManutenzione()) throw new ManutenzioneOrServizioException("già in manutenzione", true);
         parcoMezzi.setInManutenzione(true);
         Manutenzione manutenzione = new Manutenzione(tipoManutenzione, parcoMezzi);
-
         em.persist(manutenzione);
-
         System.out.println("Il veicolo " + manutenzione.getParcoMezzi().getMatricola() + " è in manutenzione");
     }
 
     public void salvaManutenzione(Manutenzione manutenzione) {
         EntityTransaction transaction = em.getTransaction();
-        transaction.begin();
         em.persist(manutenzione);
-        transaction.commit();
     }
 
     public long contaManutenzioniPerMezzo(ParcoMezzi veicolo) {
-        return em.createQuery(
-                        "SELECT COUNT(m) FROM Manutenzione m WHERE m.parcoMezzi = :veicolo", Long.class)
+        return em.createQuery("SELECT COUNT(m) FROM Manutenzione m WHERE m.parcoMezzi = :veicolo", Long.class)
                 .setParameter("veicolo", veicolo)
                 .getSingleResult();
+    }
+
+    public void terminaManutenzione(ParcoMezzi parcoMezzi) {
+        if(parcoMezzi.isInServizio()){
+            throw new ManutenzioneOrServizioException("Il veicolo è in servizio e non può terminare la manutenzione", false);
+        }
+        if(!parcoMezzi.isInManutenzione()){
+            throw new ManutenzioneOrServizioException("Il veicolo non è in manutenzione", false);
+        }
+        parcoMezzi.setInManutenzione(false);
+
+        Optional<Manutenzione> ricerca = parcoMezzi.getManutenzionList().stream().filter(manutenzione -> manutenzione.getDataFine() == null).findFirst();
+
+        ricerca.ifPresent(manutenzione -> manutenzione.setDataFine(LocalDate.now()));
+        em.persist(parcoMezzi);
+        System.out.println("Il veicolo " + parcoMezzi.getMatricola() + " è fuori manutenzione");
     }
 
 
