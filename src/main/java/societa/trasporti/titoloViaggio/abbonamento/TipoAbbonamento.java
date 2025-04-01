@@ -1,4 +1,4 @@
-package titoloViaggio.abbonamento;
+package societa.trasporti.titoloViaggio.abbonamento;
 
 public enum TipoAbbonamento {
     //

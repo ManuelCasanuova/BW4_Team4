@@ -1,28 +1,47 @@
 package societa.trasporti.parchiMezzi;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import societa.trasporti.manutenzione.Manutenzione;
+import societa.trasporti.servizi.Servizio;
+
+import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Table(name = "mezzi")
-
+@Table(name = "mezzi_pubblici")
+@NoArgsConstructor
 
 
 public abstract class ParcoMezzi {
+
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long matricola;
 
-   @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_veicolo")
     private TipoVeicolo tipoVeicolo;
 
+    @Column
     private int capienza;
-    private boolean inServizio;
-}
 
+    @Column(name = "in_servizio")
+    private boolean inServizio=false;
+
+    @Column (name = "in_manutenzione")
+    private boolean inManutenzione=false;
+
+    @OneToMany(mappedBy = "veicoloPubblico")
+    private List<Servizio> serviziList;
+
+    @OneToMany(mappedBy = "veicoloPubblico")
+    private List<Manutenzione> manutenzionList;
+
+    public ParcoMezzi(Long matricola, TipoVeicolo tipoVeicolo) {
+        this.matricola = matricola;
+        this.tipoVeicolo = tipoVeicolo;
+        this.capienza = tipoVeicolo ==  TipoVeicolo.AUTOBUS ? 50 : 150;
+    }
+}
