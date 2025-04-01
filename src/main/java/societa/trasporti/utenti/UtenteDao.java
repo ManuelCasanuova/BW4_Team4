@@ -1,8 +1,7 @@
-package societa.trasporti.DAO;
+package societa.trasporti.utenti;
 
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
-import societa.trasporti.utenti.Utente;
 
 @AllArgsConstructor
 public class UtenteDao {
