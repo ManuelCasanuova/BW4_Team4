@@ -1,6 +1,7 @@
 package societa.trasporti.titoloViaggio.abbonamento;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import societa.trasporti.titoloViaggio.TitoloViaggio;
 import societa.trasporti.utenti.Tessera;
@@ -9,9 +10,10 @@ import societa.trasporti.vendita.PuntoVendita;
 
 import java.time.LocalDate;
 
-
+@Data
 @Entity
 @Table(name="abbonamenti")
+@NoArgsConstructor
 
 
 public class Abbonamento extends TitoloViaggio {

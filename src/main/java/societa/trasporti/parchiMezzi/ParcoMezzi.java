@@ -3,6 +3,10 @@ package societa.trasporti.parchiMezzi;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import societa.trasporti.manutenzione.Manutenzione;
+import societa.trasporti.servizi.Servizio;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -28,6 +32,12 @@ public abstract class ParcoMezzi {
 
     @Column (name = "in_manutenzione")
     private boolean inManutenzione=false;
+
+    @OneToMany(mappedBy = "veicoloPubblico")
+    private List<Servizio> serviziList;
+
+    @OneToMany(mappedBy = "veicoloPubblico")
+    private List<Manutenzione> manutenzionList;
 
     public ParcoMezzi(Long matricola, TipoVeicolo tipoVeicolo) {
         this.matricola = matricola;
