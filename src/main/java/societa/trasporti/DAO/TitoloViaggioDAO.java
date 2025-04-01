@@ -4,6 +4,7 @@ package societa.trasporti.DAO;
 import jakarta.persistence.EntityManager;
 import societa.trasporti.exception.ConvalidatoException;
 import societa.trasporti.exception.NotFoundException;
+import societa.trasporti.exception.RangeDateErrato;
 import societa.trasporti.parchiMezzi.ParcoMezzi;
 import societa.trasporti.titoloViaggio.TitoloViaggio;
 import societa.trasporti.titoloViaggio.biglietto.Biglietto;
@@ -26,7 +27,14 @@ public class TitoloViaggioDAO {
 
     // trova un titolo di viaggio tramite il codice univoco
     public TitoloViaggio findTitoloViaggioByCodiceUnivoco(Long codiceUnivoco) {
-        return em.find(TitoloViaggio.class, codiceUnivoco);
+        if (codiceUnivoco == null){
+            throw new IllegalArgumentException("Il codice univoco non può essere null");
+        }
+        TitoloViaggio TitoloViaggio = em.find(TitoloViaggio.class, codiceUnivoco);
+        if (TitoloViaggio == null){
+            throw new NotFoundException("titoloViaggio", "codiceUnivoco");
+        }
+        return TitoloViaggio;
     }
 
     // trova tutti i titoli di viaggio
@@ -52,15 +60,15 @@ public class TitoloViaggioDAO {
     // controlla se un biglietto è convalidato
     public void convalidaBiglietto(Long codiceUnivoco) {
         Biglietto biglietto = em.find(Biglietto.class, codiceUnivoco);
-        if (biglietto != null) {
-            if (biglietto.isConvalidato()) {
-                System.out.println("Biglietto convalidato");
-            } else {
-                System.out.println("Biglietto non convalidato");
-            }
-        } else {
-            System.out.println("Biglietto non trovato");
+        if (biglietto == null) {
+            throw new NotFoundException("biglietto", "codiceUnivoco");
         }
+        if (biglietto.isConvalidato()) {
+            throw new ConvalidatoException(codiceUnivoco, biglietto.getParcoMezzi());
+        }
+        biglietto.setConvalidato(true);
+        em.merge(biglietto);
+        System.out.println("Biglietto già convalidato ");
     }
 
     // obliteratrice
@@ -75,6 +83,7 @@ public class TitoloViaggioDAO {
         biglietto.setConvalidato(true);
         biglietto.setParcoMezzi(parcoMezzi);
         em.merge(biglietto);
+        System.out.println("Biglietto obliterato con successo");
     }
 
 
@@ -120,6 +129,16 @@ public class TitoloViaggioDAO {
                 .getResultList();
     }
 
-
+   // lista dei titoli di viaggio emessi in un determinato periodo per punto vendita
+    public List<TitoloViaggio> findTitoliViaggioByPeriodo(LocalDate dataInizioPeriodo, LocalDate dataFinePeriodo, Long idPuntoVendita) {
+        if(dataInizioPeriodo == null || dataFinePeriodo == null || dataInizioPeriodo.isAfter(dataFinePeriodo)){
+            throw new RangeDateErrato(dataInizioPeriodo, dataFinePeriodo);
+        }
+        return em.createQuery("SELECT t FROM TitoloViaggio t WHERE t.puntoVendita.id = :idPuntoVendita AND t.dataAquisto BETWEEN :dataInizioPeriodo AND :dataFinePeriodo", TitoloViaggio.class)
+                .setParameter("dataInizioPeriodo", dataInizioPeriodo)
+                .setParameter("dataFinePeriodo", dataFinePeriodo)
+                .setParameter("idPuntoVendita", idPuntoVendita)
+                .getResultList();
+    }
 
 }
