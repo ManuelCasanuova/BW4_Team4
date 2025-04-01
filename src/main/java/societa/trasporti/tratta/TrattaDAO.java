@@ -9,7 +9,7 @@ import java.util.Optional;
 public class TrattaDAO {
 
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY =
-            Persistence.createEntityManagerFactory("trasportiPU");
+            Persistence.createEntityManagerFactory("epicode");
 
     private EntityManager entityManager;
 

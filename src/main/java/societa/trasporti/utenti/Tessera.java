@@ -12,7 +12,6 @@ import java.util.List;
 @Entity
 @Table(name = "tessere")
 @NoArgsConstructor
-
 public class Tessera {
 
     @Id
@@ -20,16 +19,17 @@ public class Tessera {
     @Column(name = "tessera_id")
     private Long id;
 
-    @Column(name = "data_di_emissione")
+    @Column(name = "data_di_emissione", nullable = false)
     private LocalDate dataDiEmissione;
 
-    @Column(name = "data_di_scadenza")
+    @Column(name = "data_di_scadenza", nullable = false)
     private LocalDate dataDiScadenza;
 
     @OneToOne
-    @JoinColumn(name = "utente_id")
+    @JoinColumn(name = "utente_id", nullable = false)
     private Utente utente;
 
+    @OneToMany(mappedBy = "tessera", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Abbonamento> abbonamentiList;
 
     public Tessera(Utente utente, LocalDate dataDiEmissione) {

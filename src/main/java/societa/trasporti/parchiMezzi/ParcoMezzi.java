@@ -12,8 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "mezzi_pubblici")
 @NoArgsConstructor
-
-
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class ParcoMezzi {
 
     @Id
@@ -33,10 +32,10 @@ public abstract class ParcoMezzi {
     @Column (name = "in_manutenzione")
     private boolean inManutenzione=false;
 
-    @OneToMany(mappedBy = "veicoloPubblico")
+    @OneToMany(mappedBy = "parcoMezzi", cascade = CascadeType.ALL)
     private List<Servizio> serviziList;
 
-    @OneToMany(mappedBy = "veicoloPubblico")
+    @OneToMany(mappedBy = "parcoMezzi", cascade = CascadeType.ALL)
     private List<Manutenzione> manutenzionList;
 
     public ParcoMezzi(Long matricola, TipoVeicolo tipoVeicolo) {
