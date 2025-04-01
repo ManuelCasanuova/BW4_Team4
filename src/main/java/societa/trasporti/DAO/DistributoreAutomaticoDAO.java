@@ -1,45 +1,50 @@
 package societa.trasporti.DAO;
 
 import jakarta.persistence.EntityManager;
-import sistemadistribuzione.DistributoreAutomatico;
-import sistemadistribuzione.StatoDistributore;
+import lombok.AllArgsConstructor;
+import societa.trasporti.vendita.distributori.Distributore;
 
-import java.time.LocalDate;
+
 import java.util.List;
 
-public class DistributoreAutomaticoDAO extends GenericDAO<DistributoreAutomatico> {
+@AllArgsConstructor
+public class DistributoreAutomaticoDAO {
 
-    public DistributoreAutomaticoDAO(EntityManager entityManager) {
-        super(entityManager);
+    private EntityManager em;
+
+    // meodo per fare il find di un distributore automatico
+    public Distributore findDistributoreAutomatico(Long id) {
+        return em.find(Distributore.class, id);
     }
 
-    // Metodo per trovare i distributori in base al loro stato (attivo o fuori servizio)
-    public List<DistributoreAutomatico> findByStato(String stato) {
-        String query = "SELECT d FROM DistributoreAutomatico d WHERE d.stato = :stato";
-        return getEntityManager()
-                .createQuery(query, DistributoreAutomatico.class)
-                .setParameter("stato", stato)
-                .getResultList();
+    // metodo per salvare un distributore automatico
+    public void save(Distributore d) {
+        em.persist(d);
     }
 
-    // Metodo per aggiornare lo stato di un distributore
-    public void updateStato(Long idDistributore, String nuovoStato) {
-        DistributoreAutomatico distributore = findById(DistributoreAutomatico.class, idDistributore);
-        if (distributore == null) {
-            throw new IllegalArgumentException("Distributore con ID " + idDistributore + " non trovato.");
-        }
-        distributore.setStato(StatoDistributore.valueOf(nuovoStato));
-        update(distributore);
+    // metodo per cancellare un distributore automatico dato un id
+    public void DeleteById (Long id) {
+        Distributore d = em.find(Distributore.class, id);
+        em.remove(d);
     }
 
-    // Metodo per ottenere le vendite effettuate da un distributore in un intervallo di tempo
-    public List getVenditeByDistributore(Long idDistributore, LocalDate inizio, LocalDate fine) {
-        String query = "SELECT v FROM Vendita v WHERE v.distributore.id = :idDistributore AND v.data BETWEEN :inizio AND :fine";
-        return getEntityManager()
-                .createQuery(query)
-                .setParameter("idDistributore", idDistributore)
-                .setParameter("inizio", inizio)
-                .setParameter("fine", fine)
-                .getResultList();
+    // metodo per modificare un distributore automatico
+    public void update(Distributore d) {
+        em.merge(d);
+    }
+
+    // metodo per fare la lista di tutti i distributori automatici
+    public List<Distributore> findAll() {
+        return em.createQuery("SELECT d FROM Distributore d", Distributore.class).getResultList();
+    }
+
+    // metodo per fare la lista di tutti i distributori automatici attivi
+    public List<Distributore> findAllAttivi() {
+        return em.createQuery("SELECT d FROM Distributore d WHERE d.inServizio = true", Distributore.class).getResultList();
+    }
+
+    // metodo per fare la lista di tutti i distributori automatici inattivi
+    public List<Distributore> findAllInattivi() {
+        return em.createQuery("SELECT d FROM Distributore d WHERE d.inServizio = false", Distributore.class).getResultList();
     }
 }
