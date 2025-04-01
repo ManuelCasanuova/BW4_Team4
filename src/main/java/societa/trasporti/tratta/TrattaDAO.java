@@ -1,8 +1,7 @@
-package societa.trasporti.DAO;
+package societa.trasporti.tratta;
 
 import jakarta.persistence.*;
 import societa.trasporti.exception.TrattaException;
-import societa.trasporti.tratta.Tratta;
 
 import java.util.List;
 import java.util.Optional;
