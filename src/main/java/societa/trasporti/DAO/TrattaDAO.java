@@ -29,7 +29,7 @@ public class TrattaDAO {
         try {
             return Optional.ofNullable(entityManager.find(Tratta.class, id));
         } catch (Exception e) {
-            throw new TrattaException("Errore nel recupero della tratta con ID: " + id, e);
+            throw new TrattaException();
         }
     }
 
@@ -41,7 +41,7 @@ public class TrattaDAO {
             query.setParameter("zonaPartenza", zonaPartenza);
             return query.getResultList();
         } catch (Exception e) {
-            throw new TrattaException("Errore nel recupero delle tratte per la zona di partenza: " + zonaPartenza, e);
+            throw new TrattaException();
         }
     }
 
@@ -53,7 +53,7 @@ public class TrattaDAO {
             query.setParameter("zonaArrivo", zonaArrivo);
             return query.getResultList();
         } catch (Exception e) {
-            throw new TrattaException("Errore nel recupero delle tratte per la zona di arrivo: " + zonaArrivo, e);
+            throw new TrattaException();
         }
     }
 
@@ -65,7 +65,7 @@ public class TrattaDAO {
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
-            throw new TrattaException("Errore durante il salvataggio della tratta", e);
+            throw new TrattaException();
         }
     }
 
@@ -77,7 +77,7 @@ public class TrattaDAO {
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
-            throw new TrattaException("Errore durante l'aggiornamento della tratta", e);
+            throw new TrattaException();
         }
     }
 
@@ -89,12 +89,12 @@ public class TrattaDAO {
             if (tratta != null) {
                 entityManager.remove(tratta);
             } else {
-                throw new TrattaException("Tratta con ID " + id + " non trovata");
+                throw new TrattaException();
             }
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
-            throw new TrattaException("Errore durante l'eliminazione della tratta con ID: " + id, e);
+            throw new TrattaException();
         }
     }
 }
