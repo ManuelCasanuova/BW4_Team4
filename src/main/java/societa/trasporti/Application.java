@@ -4,7 +4,9 @@ import com.github.javafaker.Faker;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import societa.trasporti.manutenzione.Manutenzione;
 import societa.trasporti.manutenzione.ManutenzioneDAO;
+import societa.trasporti.manutenzione.TipoManutenzione;
 import societa.trasporti.parchiMezzi.ParcoMezzi;
 import societa.trasporti.parchiMezzi.ParcoMezziDAO;
 import societa.trasporti.parchiMezzi.TipoVeicolo;
@@ -46,7 +48,7 @@ public class Application {
         TitoloViaggioDAO titoloViaggioDAO = new TitoloViaggioDAO(em);
         ParcoMezziDAO parcoMezziDAO = new ParcoMezziDAO(em);
         ManutenzioneDAO manutenzioneDAO = new ManutenzioneDAO(em);
-        ServizioDAO servizioDAO = new ServizioDAO();
+        ServizioDAO servizioDAO = new ServizioDAO(em);
 
 
         em.getTransaction().commit();
@@ -157,8 +159,49 @@ public class Application {
         if(servizioDAO.listaControlloServiziAttivi().isEmpty()){
             List<ParcoMezzi> mezzi = parcoMezziDAO.findAllParcoMezzi();
             List<Tratta> tratte = trattaDAO.ottieniListaTratte();
-            for
+            for(int i = 0; i<10; i++){
+                servizioDAO.entrataInServizio(mezzi.get(i), tratte.get(i));
+            }
+
         }
+
+       if (!bigliettiObliteratiInizializzati){
+           List<ParcoMezzi> mezzi = parcoMezziDAO.findAllParcoMezzi();
+           if(!mezzi.isEmpty()) {
+               List<PuntoVendita> puntiVendita = puntoVenditaDAO.ottieniListaPuntiVendita();
+               for (int i = 0; i < 10; i++) {
+                  PuntoVendita  puntoVendita = puntiVendita.get(faker.random().nextInt(0, puntiVendita.size() - 1));
+                  ParcoMezzi mezzo = mezzi.get(faker.random().nextInt(0, mezzi.size() - 1));
+                  Biglietto  biglietto = new Biglietto(null, Double.parseDouble(faker.commerce().price()),LocalDate.now().minusDays(faker.random().nextInt(1, 150)),puntoVendita);
+                  titoloViaggioDAO.salvaTitoloViaggio(biglietto);
+                  titoloViaggioDAO.obliteraBiglietto(biglietto.getCodiceUnivoco(),mezzo);
+               }
+           }
+           bigliettiObliteratiInizializzati = true;
+       }
+    }
+    public static void storicoMezzi (ParcoMezziDAO parcoMezziDAO, ServizioDAO servizioDAO, ManutenzioneDAO  manutenzioneDAO,TrattaDAO trattaDAO, PuntoVenditaDAO  puntoVenditaDAO){
+
+        List<ParcoMezzi> mezzi = parcoMezziDAO.findAllParcoMezzi();
+        List<Tratta> tratte = trattaDAO.ottieniListaTratte();
+        if(tratte.isEmpty()){
+            System.out.println("Nessuna tratta disponibile, verificare. Aggiungi una tratta nel DB");
+            return;
+        }
+        int[] numeroManutenzioni = {10, 5, 10, 7, 2, 8, 3, 6, 4, 9};
+        int[] numeroServizi = {10, 5, 10, 7, 2, 8, 3, 6, 4, 9};
+        for(ParcoMezzi mezzo : mezzi){
+            Long manutenzioniPresenti = ManutenzioneDAO.contaManutenzioniPerMezzo(mezzo); // verificare che non si rompa!!
+            Long serviziPresenti = servizioDAO.numeroServiziPerMezzo(mezzo);
+            if(manutenzioniPresenti < numeroManutenzioni[mezzi.indexOf(mezzo)]){
+                // calcolo della differenza tra le manutenzioni presenti e quelle del database
+                int differenza = numeroManutenzioni[mezzi.indexOf(mezzo)] - manutenzioniPresenti.intValue();
+                for(int i = 0; i < differenza; i++){
+                    Manutenzione manutenzione = new Manutenzione (TipoManutenzione.values()[faker.random().nextInt(TipoManutenzione.values().length)]);
+                }
+            }
+        }
+
     }
 
 

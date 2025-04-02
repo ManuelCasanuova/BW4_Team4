@@ -14,7 +14,6 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "biglietti")
 @NoArgsConstructor
 
 public class Biglietto extends TitoloViaggio {
