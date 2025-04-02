@@ -13,7 +13,7 @@ import java.util.List;
 @Table(name = "mezzi_pubblici")
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class ParcoMezzi {
+public class ParcoMezzi {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
