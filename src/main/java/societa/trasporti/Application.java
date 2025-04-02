@@ -10,6 +10,7 @@ import societa.trasporti.manutenzione.TipoManutenzione;
 import societa.trasporti.parchiMezzi.ParcoMezzi;
 import societa.trasporti.parchiMezzi.ParcoMezziDAO;
 import societa.trasporti.parchiMezzi.TipoVeicolo;
+import societa.trasporti.servizi.Servizio;
 import societa.trasporti.servizi.ServizioDAO;
 import societa.trasporti.titoloViaggio.abbonamento.Abbonamento;
 import societa.trasporti.titoloViaggio.abbonamento.TipoAbbonamento;
@@ -190,6 +191,7 @@ public class Application {
         }
         int[] numeroManutenzioni = {10, 5, 10, 7, 2, 8, 3, 6, 4, 9};
         int[] numeroServizi = {10, 5, 10, 7, 2, 8, 3, 6, 4, 9};
+        int indice = 0;
         for(ParcoMezzi mezzo : mezzi){
 
             Long manutenzioniPresenti = ManutenzioneDAO.contaManutenzioniPerMezzo(mezzo); // verificare che non si rompa!!
@@ -199,17 +201,31 @@ public class Application {
             boolean serviziAggiornati = false;
 
             if(manutenzioniPresenti < numeroManutenzioni[mezzi.indexOf(mezzo)]){
-                // calcolo della differenza tra le manutenzioni presenti e quelle del database
-                int differenza = numeroManutenzioni[mezzi.indexOf(mezzo)] - manutenzioniPresenti.intValue();
-                for(int i = 0; i < differenza; i++){
+                // calcolo della differenzaManutenzioni tra le manutenzioni presenti e quelle del database
+                int differenzaManutenzioni = numeroManutenzioni[mezzi.indexOf(mezzo)] - manutenzioniPresenti.intValue();
+                for(int i = 0; i < differenzaManutenzioni; i++){
                     Manutenzione manutenzione = new Manutenzione (LocalDate.now().minusMonths(faker.random().nextInt(1,12)),LocalDate.now().minusMonths(faker.random().nextInt(1,6)), TipoManutenzione.values()[faker.random().nextInt(TipoManutenzione.values().length)], mezzo);
                     manutenzioneDAO.salvaManutenzione(manutenzione);
                 }
+
                 manutenzioniAggiornate = true;
             }
+            if(serviziPresenti < numeroServizi[mezzi.indexOf(mezzo)]){
+                int differenzaServizi = numeroServizi[mezzi.indexOf(mezzo)] - serviziPresenti.intValue();
+                Tratta trattaSelezionata = tratte.get(indice % tratte.size());
+                for(int i = 0; i < differenzaServizi; i++){
+                    Servizio servizio = new Servizio(LocalDate.now().minusMonths(faker.random().nextInt(1, 12)),LocalDate.now().minusMonths(faker.random().nextInt(1, 6)), mezzo, trattaSelezionata);
+                    servizioDAO.save(servizio);
+                }
+                serviziAggiornati = true;
+            }
+            indice ++;
         }
 
+
     }
+
+
 
 
 }
