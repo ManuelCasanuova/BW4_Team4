@@ -14,11 +14,6 @@ public class TrattaDAO {
         this.em = em;
     }
 
-    public void close() {
-        if (em != null && em.isOpen()) {
-            em.close();
-        }
-    }
 
     // trova tratta per id
     public Optional<Tratta> findById(Long id) {
@@ -92,5 +87,9 @@ public class TrattaDAO {
             em.getTransaction().rollback();
             throw new TrattaPercorsaException();
         }
+    }
+
+    public List<Tratta> ottieniListaTratte() {
+        return em.createQuery("SELECT t FROM Tratta t", Tratta.class).getResultList();
     }
 }

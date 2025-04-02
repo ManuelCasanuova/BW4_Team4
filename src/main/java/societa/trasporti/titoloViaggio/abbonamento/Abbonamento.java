@@ -29,17 +29,15 @@ public class Abbonamento extends TitoloViaggio {
     @JoinColumn(name = "tessera_id")
     private Tessera tessera;
 
-    public Abbonamento(Long codiceUnivoco, double prezzoViaggio, LocalDate dataAcquisto, PuntoVendita puntoVendita,
-                       TipoAbbonamento tipoAbbonamento, LocalDate dataInizio, Tessera tessera) {
+
+    public Abbonamento(Long codiceUnivoco, double prezzoViaggio, LocalDate dataAcquisto, PuntoVendita puntoVendita, TipoAbbonamento tipoAbbonamento, Tessera tessera, LocalDate dataInizio) {
         super(codiceUnivoco, prezzoViaggio, dataAcquisto, puntoVendita);
         this.tipoAbbonamento = tipoAbbonamento;
         this.dataInizio = dataInizio;
+        if(tipoAbbonamento == TipoAbbonamento.SETTIMANALE) this.dataFine = dataInizio.plusWeeks(1);
+        else if(tipoAbbonamento == TipoAbbonamento.MENSILE) this.dataFine = dataInizio.plusMonths(1);
+        else if (tipoAbbonamento == TipoAbbonamento.SEMESTRALE) this.dataFine = dataInizio.plusMonths (6);
+        else this.dataFine= dataInizio.plusYears(1);
         this.tessera = tessera;
-
-        switch (tipoAbbonamento) {
-            case SETTIMANALE -> this.dataFine = dataInizio.plusDays(7);
-            case MENSILE -> this.dataFine = dataInizio.plusMonths(1);
-            case SEMESTRALE -> this.dataFine = dataInizio.plusMonths(6);
-        }
     }
 }
