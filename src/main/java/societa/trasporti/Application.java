@@ -191,14 +191,21 @@ public class Application {
         int[] numeroManutenzioni = {10, 5, 10, 7, 2, 8, 3, 6, 4, 9};
         int[] numeroServizi = {10, 5, 10, 7, 2, 8, 3, 6, 4, 9};
         for(ParcoMezzi mezzo : mezzi){
+
             Long manutenzioniPresenti = ManutenzioneDAO.contaManutenzioniPerMezzo(mezzo); // verificare che non si rompa!!
             Long serviziPresenti = servizioDAO.numeroServiziPerMezzo(mezzo);
+
+            boolean manutenzioniAggiornate = false;
+            boolean serviziAggiornati = false;
+
             if(manutenzioniPresenti < numeroManutenzioni[mezzi.indexOf(mezzo)]){
                 // calcolo della differenza tra le manutenzioni presenti e quelle del database
                 int differenza = numeroManutenzioni[mezzi.indexOf(mezzo)] - manutenzioniPresenti.intValue();
                 for(int i = 0; i < differenza; i++){
-                    Manutenzione manutenzione = new Manutenzione (TipoManutenzione.values()[faker.random().nextInt(TipoManutenzione.values().length)]);
+                    Manutenzione manutenzione = new Manutenzione (LocalDate.now().minusMonths(faker.random().nextInt(1,12)),LocalDate.now().minusMonths(faker.random().nextInt(1,6)), TipoManutenzione.values()[faker.random().nextInt(TipoManutenzione.values().length)], mezzo);
+                    manutenzioneDAO.salvaManutenzione(manutenzione);
                 }
+                manutenzioniAggiornate = true;
             }
         }
 
