@@ -32,7 +32,7 @@ public class ManutenzioneDAO {
         em.persist(manutenzione);
     }
 
-    public long contaManutenzioniPerMezzo(ParcoMezzi veicolo) {
+    public static long contaManutenzioniPerMezzo(ParcoMezzi veicolo) {
         return em.createQuery("SELECT COUNT(m) FROM Manutenzione m WHERE m.parcoMezzi = :veicolo", Long.class)
                 .setParameter("veicolo", veicolo)
                 .getSingleResult();

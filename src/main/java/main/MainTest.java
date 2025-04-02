@@ -1,4 +1,4 @@
-package societa.trasporti;
+package main;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
