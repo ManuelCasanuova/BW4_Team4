@@ -1,11 +1,10 @@
-package societa.trasporti.DAO;
+package societa.trasporti.utenti;
 
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
-import societa.trasporti.utenti.Utente;
 
 @AllArgsConstructor
-public class UtenteDao {
+public class UtenteDAO {
     private EntityManager em;
 
     // metodo per fare il find di un utente

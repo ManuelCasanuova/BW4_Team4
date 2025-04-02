@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import societa.trasporti.exception.NotFoundException;
 import societa.trasporti.parchiMezzi.ParcoMezzi;
 import societa.trasporti.titoloViaggio.TitoloViaggio;
 import societa.trasporti.utenti.Utente;
