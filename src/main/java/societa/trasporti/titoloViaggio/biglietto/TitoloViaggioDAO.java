@@ -44,7 +44,7 @@ public class TitoloViaggioDAO {
         System.out.println((titoloViaggio instanceof Biglietto ? "Biglietto ": "Abbonamento ") + titoloViaggio.getCodiceUnivoco() + " comprato correttamente presso " + titoloViaggio.getPuntoVendita().getIndirizzo());
     }
 
-    public List<TitoloViaggio> ottieniListaTitoliViaggio() {
+    public static List<TitoloViaggio> ottieniListaTitoliViaggio() {
         return em.createNamedQuery("getAllTitoliViaggio", TitoloViaggio.class)
                 .getResultList();
     }
