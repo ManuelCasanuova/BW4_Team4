@@ -35,4 +35,6 @@ public class Utente {
         this.nominativo = nominativo;
         this.annoNascita = annoNascita;
     }
+
+
 }
