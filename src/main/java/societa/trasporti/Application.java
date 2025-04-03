@@ -122,7 +122,7 @@ public class Application {
             }
         }
 
-        if (TitoloViaggioDAO.ottieniListaTitoliViaggio().isEmpty()) {
+        if (TitoloViaggioDAO.ottieniListaTitoliViaggio(em).isEmpty()) {
             List<PuntoVendita> listaPuntiVendita = puntoVenditaDAO.ottieniListaPuntiVendita();
             List<Tessera> listaTessere = tesseraDAO.ottieniListaTessere();
             List<TipoAbbonamento> tipoAbbonamentoList = Arrays.asList(TipoAbbonamento.values());
@@ -224,8 +224,4 @@ public class Application {
 
 
     }
-
-
-
-
 }
