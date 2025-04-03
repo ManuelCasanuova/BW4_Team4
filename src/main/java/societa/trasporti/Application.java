@@ -157,7 +157,7 @@ public class Application {
             }
         }
 
-        if(servizioDAO.listaControlloServiziAttivi().isEmpty()){
+        if(servizioDAO.listaControlloServiziAttivi(em).isEmpty()){
             List<ParcoMezzi> mezzi = parcoMezziDAO.findAllParcoMezzi();
             List<Tratta> tratte = trattaDAO.ottieniListaTratte();
             for(int i = 0; i<10; i++){

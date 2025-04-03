@@ -48,7 +48,7 @@ public class ServizioDAO {
                 .getSingleResult();
     }
 
-    public List<Servizio>  listaControlloServiziAttivi () {
+    public static List<Servizio>  listaControlloServiziAttivi (EntityManager em) {
         return em.createQuery("SELECT s FROM Servizio s WHERE s.dataFine IS NULL", Servizio.class).getResultList();
     }
 
