@@ -1,122 +1,118 @@
 package societa.trasporti;
 
+import com.github.javafaker.Faker;
+import jakarta.persistence.*;
+import societa.trasporti.manutenzione.ManutenzioneDAO;
+import societa.trasporti.parchiMezzi.ParcoMezziDAO;
+import societa.trasporti.servizi.ServizioDAO;
+import societa.trasporti.titoloViaggio.TitoloViaggio;
+import societa.trasporti.titoloViaggio.abbonamento.Abbonamento;
+import societa.trasporti.titoloViaggio.abbonamento.TipoAbbonamento;
+import societa.trasporti.titoloViaggio.biglietto.TitoloViaggioDAO;
 import societa.trasporti.tratta.TrattaDAO;
 import societa.trasporti.exception.TrattaPercorsaException;
-import societa.trasporti.parchiMezzi.ParcoMezzi;
-import societa.trasporti.parchiMezzi.TipoVeicolo;
 import societa.trasporti.tratta.Tratta;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import societa.trasporti.utenti.TesseraDAO;
+import societa.trasporti.utenti.UtenteDAO;
+import societa.trasporti.vendita.PuntoVenditaDAO;
+import java.util.*;
 
 public class Main {
+    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("epicode");
+    private static final Faker faker = new Faker(Locale.ITALY);
+
     public static void main(String[] args) {
+        EntityManager em = emf.createEntityManager();
+
+        PuntoVenditaDAO puntoVenditaDAO = new PuntoVenditaDAO(em);
+        TrattaDAO trattaDAO = new TrattaDAO(em);
+        UtenteDAO utenteDao = new UtenteDAO(em);
+        TesseraDAO tesseraDAO = new TesseraDAO(em);
+        TitoloViaggioDAO titoloViaggioDAO = new TitoloViaggioDAO(em);
+        ParcoMezziDAO parcoMezziDAO = new ParcoMezziDAO(em);
+        ManutenzioneDAO manutenzioneDAO = new ManutenzioneDAO(em);
+        ServizioDAO servizioDAO = new ServizioDAO(em);
+
         Scanner scanner = new Scanner(System.in);
-        TrattaDAO trattaDAO = new TrattaDAO();
 
         try {
-            System.out.println("Benvenuto nel Sistema di Trasporti");
-            System.out.println("Sei un:\n1. Utente \n2. Amministratore");
+            System.out.println("=== SISTEMA DI TRASPORTI ===");
+            System.out.println("Sei un: \\n1. Utente \\n2. Amministratore");
             System.out.print("Scelta: ");
             int ruolo = scanner.nextInt();
             scanner.nextLine();
 
             switch (ruolo) {
-                case 1 -> menuUtente(scanner, trattaDAO);
+                case 1 -> menuUtente(scanner, trattaDAO, titoloViaggioDAO);
                 case 2 -> menuAmministratore(scanner, trattaDAO);
-                default -> System.out.println("Scelta non valida!");
+                default -> System.out.println("⚠️ Scelta non valida!");
             }
 
         } finally {
-            trattaDAO.close();
+            em.close();
+            emf.close();
             scanner.close();
         }
     }
 
     // menu utente
-    private static void menuUtente(Scanner scanner, TrattaDAO trattaDAO) {
+    private static void menuUtente(Scanner scanner, TrattaDAO trattaDAO, TitoloViaggioDAO titoloViaggioDAO) {
         while (true) {
-            System.out.println("\n MENU UTENTE");
-            System.out.println("1. Compra bigletto o abbonamento");
-            System.out.println("2. Cerca tratte per zona di partenza");
-            System.out.println("3. Cerca tratte per zona di arrivo");
-            System.out.println("4. Visualizza tutte le tratte");
+            System.out.println("\\n=== MENU UTENTE ===");
+            System.out.println("1. Compra biglietto");
+            System.out.println("2. Compra abbonamento");
+            System.out.println("3. Cerca tratte per zona di partenza");
+            System.out.println("4. Cerca tratte per zona di arrivo");
+            System.out.println("5. Visualizza tutte le tratte");
             System.out.println("0. Esci");
             System.out.print("Scelta: ");
             int scelta = scanner.nextInt();
             scanner.nextLine();
 
-            switch () {
+            switch (scelta) {
                 case 1 -> {
-                    System.out.println("Seleziona la tratta per cui vuoi comprare il biglietto:");
-                    List<Tratta> tratte = trattaDAO.ottieniListaTratte();
-                    stampaTratte(tratte);
-                    System.out.print("Inserisci l'ID della tratta: ");
+                    System.out.print("Inserisci ID tratta: ");
                     Long idTratta = scanner.nextLong();
-                    scanner.nextLine();
-                    System.out.print("Inserisci il numero di biglietti da comprare: ");
+                    System.out.print("Numero di biglietti: ");
                     int numBiglietti = scanner.nextInt();
-                    scanner.nextLine();
-                    try {
-                        trattaDAO.compraBiglietto(idTratta, numBiglietti);
-                        System.out.println("Biglietto/i acquistato/i con successo!");
-                    } catch (TrattaException e) {
-                        System.out.println("Errore: " + e.getMessage());
-                    }
+                    titoloViaggioDAO.salvaTitoloViaggio(new TitoloViaggio(null, idTratta, numBiglietti));
+                    System.out.println("✅ Biglietti acquistati con successo!");
                 }
                 case 2 -> {
-                    System.out.println("Seleziona il tipo di abbonamento:");
-                    System.out.println("1. Abbonamento mensile");
-                    System.out.println("2. Abbonamento annuale");
-                    System.out.print("Scelta: ");
-                    int sceltaAbbonamento = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Inserisci il numero di abbonamenti da comprare: ");
-                    int numAbbonamenti = scanner.nextInt();
-                    scanner.nextLine();
-                    try {
-                        trattaDAO.compraAbbonamento(sceltaAbbonamento, numAbbonamenti);
-                        System.out.println("Abbonamento/i acquistato/i con successo!");
-                    } catch (TrattaException e) {
-                        System.out.println("Errore: " + e.getMessage());
-                    }
-                }
-                default -> System.out.println("Scelta non valida!");
-
-                case 2 -> {
-                    System.out.print("Inserisci zona di partenza: ");
-                    String partenza = scanner.nextLine();
-                    List<Tratta> tratte = trattaDAO.findByZonaPartenza(partenza);
-                    trattaDAO.findByZonaPartenza(tratte);
+                    System.out.print("Tipo di abbonamento (1=Mensile, 2=Annuale): ");
+                    int tipoAbbonamento = scanner.nextInt();
+                    Abbonamento abbonamento = new Abbonamento(null, TipoAbbonamento.values()[tipoAbbonamento - 1]);
+                    System.out.println("✅ Abbonamento attivato!");
                 }
                 case 3 -> {
-                    System.out.print("Inserisci zona di arrivo: ");
-                    String arrivo = scanner.nextLine();
-                    List<Tratta> tratte = trattaDAO.findByZonaArrivo(arrivo);
-                    trattaDAO.findByZonaArrivo(tratte);
+                    System.out.print("Zona di partenza: ");
+                    String partenza = scanner.nextLine();
+                    stampaTratte(trattaDAO.findByZonaPartenza(partenza));
                 }
                 case 4 -> {
-                    List<Tratta> tratte = trattaDAO.ottieniListaTratte();
-                    trattaDAO.ottieniListaTratte();
+                    System.out.print("Zona di arrivo: ");
+                    String arrivo = scanner.nextLine();
+                    stampaTratte(trattaDAO.findByZonaArrivo(arrivo));
                 }
+                case 5 -> stampaTratte(trattaDAO.ottieniListaTratte());
                 case 0 -> {
-                    System.out.println("Arrivederci!");
+                    System.out.println("👋 Arrivederci!");
                     return;
                 }
-                default -> System.out.println("Scelta non valida!");
+                default -> System.out.println("⚠️ Scelta non valida!");
             }
         }
     }
 
+
     // menu amministratore
     private static void menuAmministratore(Scanner scanner, TrattaDAO trattaDAO) {
         while (true) {
-            System.out.println("\n MENU AMMINISTRATORE");
+            System.out.println("\n=== MENU AMMINISTRATORE ===");
             System.out.println("1. Aggiungi nuova tratta");
             System.out.println("2. Elimina tratta");
             System.out.println("3. Visualizza tutte le tratte");
-            System.out.println("4. Esci");
+            System.out.println("0. Esci");
             System.out.print("Scelta: ");
             int scelta = scanner.nextInt();
             scanner.nextLine();
@@ -131,43 +127,31 @@ public class Main {
                     String arrivo = scanner.nextLine();
                     System.out.print("Tempo medio (minuti): ");
                     int tempo = scanner.nextInt();
-                    scanner.nextLine();
-
-                    Tratta nuovaTratta = new Tratta(null, nome, partenza, arrivo, tempo, null);
-                    trattaDAO.save(nuovaTratta);
-                    System.out.println("Tratta salvata con successo!");
+                    trattaDAO.save(new Tratta(null, nome, partenza, arrivo, tempo, null));
+                    System.out.println("✅ Tratta aggiunta!");
                 }
                 case 2 -> {
-                    System.out.print("Inserisci ID della tratta da eliminare: ");
+                    System.out.print("ID tratta da eliminare: ");
                     Long id = scanner.nextLong();
-                    scanner.nextLine();
                     try {
                         trattaDAO.delete(id);
-                        System.out.println("Tratta eliminata con successo!");
-                    } catch (TrattaException e) {
-                        System.out.println("Errore: " + e.getMessage());
+                        System.out.println("✅ Tratta eliminata!");
+                    } catch (TrattaPercorsaException e) {
+                        System.out.println("⚠️ Errore: " + e.getMessage());
                     }
                 }
-                case 3 -> {
-                    List<Tratta> tratte = trattaDAO.findByZonaPartenza("");
-                    stampaTratte(tratte);
-                }
-                case 4 -> {
-                    System.out.println("Uscita dal menu amministratore!");
+                case 3 -> stampaTratte(trattaDAO.ottieniListaTratte());
+                case 0 -> {
+                    System.out.println("👋 Uscita dal menu amministratore!");
                     return;
                 }
-                default -> System.out.println("Scelta non valida!");
+                default -> System.out.println("⚠️ Scelta non valida!");
             }
         }
     }
 
     private static void stampaTratte(List<Tratta> tratte) {
-        for (Tratta tratta : tratte) {
-            System.out.println("ID: " + tratta.getId());
-            System.out.println("Nome: " + tratta.getNomeTratta());
-            System.out.println("Zona di partenza: " + tratta.getZonaPartenza());
-            System.out.println("Zona di arrivo: " + tratta.getZonaArrivo());
-            System.out.println("Tempo medio: " + tratta.getTempoMedioPercorrenza() + " minuti");
-        }
+        if (tratte.isEmpty()) System.out.println("⚠️ Nessuna tratta trovata!");
+        else tratte.forEach(System.out::println);
     }
 }
