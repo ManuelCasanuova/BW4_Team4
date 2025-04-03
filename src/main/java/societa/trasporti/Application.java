@@ -221,11 +221,5 @@ public class Application {
             }
             indice ++;
         }
-
-
     }
-
-
-
-
 }
